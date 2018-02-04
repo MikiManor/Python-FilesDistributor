@@ -1,0 +1,3 @@
+[console_scripts]
+IvrDynMessages = IvrDynMessages.__main__:main
+

@@ -1,0 +1,9 @@
+setup.py
+IvrDynMessages/__init__.py
+IvrDynMessages/__main__.py
+IvrDynMessages.egg-info/PKG-INFO
+IvrDynMessages.egg-info/SOURCES.txt
+IvrDynMessages.egg-info/dependency_links.txt
+IvrDynMessages.egg-info/entry_points.txt
+IvrDynMessages.egg-info/requires.txt
+IvrDynMessages.egg-info/top_level.txt

@@ -1,0 +1,12 @@
+Metadata-Version: 1.1
+Name: IvrDynMessages
+Version: 1.0
+Summary: utility for ControlM which gets fileName, subDir and environment and delivers the files with thew same prefix to cti Servers 
+Home-page: UNKNOWN
+Author: Miki Manor
+Author-email: mmanor@isracard.co.il
+License: UNKNOWN
+Description: UNKNOWN
+Platform: UNKNOWN
+Classifier: Development Status :: 5 - Production/Stable
+Classifier: Programming Language :: Python :: 3.5
