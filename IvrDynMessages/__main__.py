@@ -7,7 +7,8 @@ import datetime
 
 
 def main():
-    argv = sys.argv[1:]
+    maxRC = 0
+    argv = sys.argv[2:]
     today = datetime.datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
     fileName = None
     subDirName = None
@@ -17,7 +18,7 @@ def main():
         if numOfArgs <= 1:
             raise Exception("no arguments sent! check it!", 9, logger.name)
         try:
-            opts, args = getopt.getopt(sys.argv[1:], 'hf:d:e:', ["Help", "FileName=", "Dir=", "Env="])
+            opts, args = getopt.getopt(argv, 'hf:d:e:', ["Help", "FileName=", "Dir=", "Env="])
         except getopt.GetoptError as ge:
             raise Exception(ge.msg, 99, logger.name)
         if len(opts) == 0:
@@ -103,7 +104,6 @@ def main():
 
 
 if __name__ == '__main__':
-    maxRC = ""
     main()
 
 
