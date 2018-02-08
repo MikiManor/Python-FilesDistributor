@@ -5,6 +5,16 @@ import getopt
 from UsefulUtilities import Utils
 import datetime
 
+def moveUnknownFiles(i_FullPath, i_FullUnknownPath):
+    import glob
+    logger, logFile, errorFile = Utils.loggerUtil()
+    for file in glob.glob(i_FullPath + "*"):
+        _, fileName = os.path.split(file)
+        logger.warn("File {} still exists after run, moving to unknown folder".format(fileName))
+        try:
+            shutil.move(file, os.path.join(i_FullUnknownPath, fileName))
+        except Exception as e:
+            logger.error("< {}::{} > ".format(subDirName, fileName) + str(e), exc_info=True)
 
 def main():
     maxRC = 0
@@ -21,10 +31,8 @@ def main():
             opts, args = getopt.getopt(argv, 'hf:d:e:', ["Help", "FileName=", "Dir=", "Env="])
         except getopt.GetoptError as ge:
             raise Exception(ge.msg, 99, logger.name)
-        if len(opts) == 0:
-            raise Exception("No Var Name sent! \'-v\' flag should be used", 9, logger.name)
-        elif len(opts) < 3:
-            raise Exception("Missing parameters: -f | -n | -p")
+        if len(opts) < 3:
+            raise Exception("Missing parameters: -f | -n | -p", 9, logger.name)
         for opt, arg in opts:
             if opt == '-h':
                 print(" -f FileName -d DirName -e Env")
@@ -61,14 +69,15 @@ def main():
         if not fileNameNoNum:
             raise Exception("Filename isn't In *_.* format!",9)
         fileNameNoNum = ''.join(map(str, fileNameNoNum))
-
         logger.info("The Files starting with {} will be proceed".format(fileNameNoNum))
         if subDirName in dirsList:
             for num in destServersNum:
                 curFileName = fileNameNoNum + "_" + num + fileExt
                 fullSourcePath = os.path.join(sourcePath, os.path.join(subDirName,curFileName))
+                fullSourcePathNoNum = os.path.join(sourcePath, os.path.join(subDirName,fileNameNoNum))
                 fullFailurePath = os.path.join(sourcePath, os.path.join(subDirName,
                                                                             os.path.join("failed", curFileName)))
+                fullUnknownPath = os.path.join(sourcePath, os.path.join(subDirName, "unknown"))
                 if os.path.exists(fullSourcePath):
                     backUpFileName = fileNameNoNum + "_" + num + "-" + str(today) + fileExt
                     fullBackUpPath = os.path.join(sourcePath, os.path.join(subDirName,
@@ -84,16 +93,21 @@ def main():
                     except Exception as e:
                         logger.error("< {}::{} > ".format(subDirName, fileName) + str(e), exc_info=True)
                         shutil.move(fullSourcePath, fullFailurePath)
-                        maxRC = 3
+                        if maxRC < 3: maxRC = 3
                         continue
                 else:
                     logger.warn("File {} doesn't exist".format(curFileName))
-                    maxRC = 2
+                    if maxRC < 2: maxRC = 2
                     continue
+            # Checking if there are still files starting with the prefix and moving them to unknown folder
+            moveUnknownFiles(fullSourcePathNoNum, fullUnknownPath)
         else:
-            raise Exception("Unknown Directory name provided: {}".format(subDirName))
+            raise Exception("Unknown Directory name provided: {}".format(subDirName), 9, logger.name)
     except Exception as e:
         exception = e.args[0]
+        if e.args[2]:
+            returningFunction = e.args[2]
+            logger.name = returningFunction
         logger.error("< {}::{} > ".format(subDirName, fileName) + str(exception), exc_info=True)
         if len(e.args) > 1:
             exitCode = e.args[1]
@@ -104,6 +118,7 @@ def main():
 
 
 if __name__ == '__main__':
+    global subDirName
     main()
 
 
